@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Alibaba Cloud Client
+Name[zh_CN]=阿里云客户端
+Comment=Manage Alibaba Cloud resources
+Comment[zh_CN]=管理阿里云资源
+Exec=alibaba-cloud-client %U
+Icon=alibaba-cloud-client
+Terminal=false
+Categories=Development;Network;Utility;
+StartupNotify=true
+StartupWMClass=Alibaba Cloud Client

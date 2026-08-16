@@ -1,0 +1,12 @@
+*.dmg
+*.dmg?*
+*.exe
+*.exe?*
+
+alibaba-cloud-client-app/
+build/
+dist/
+build-tools/node_modules/
+
+*.log
+*.part

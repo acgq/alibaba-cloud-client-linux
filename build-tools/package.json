@@ -1,0 +1,15 @@
+{
+  "name": "alibaba-cloud-client-linux-build-tools",
+  "private": true,
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "dependencies": {
+    "@electron/asar": "3.2.17",
+    "@electron/rebuild": "4.0.4",
+    "better-sqlite3": "12.5.0",
+    "node-abi": "4.31.0",
+    "node-pty": "1.1.0-beta35"
+  }
+}

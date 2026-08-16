@@ -1,0 +1,40 @@
+pkgname=alibaba-cloud-client
+pkgver=2.3.3
+pkgrel=1
+pkgdesc='Alibaba Cloud Client repackaged for Linux from the official macOS DMG'
+arch=('x86_64')
+url='https://github.com/aliyun/alibaba-cloud-client'
+license=('custom:upstream')
+depends=(
+  'alsa-lib'
+  'at-spi2-core'
+  'cups'
+  'gtk3'
+  'libdrm'
+  'libxkbcommon'
+  'libxss'
+  'libxtst'
+  'mesa'
+  'nss'
+)
+optdepends=('xdg-utils: desktop integration helpers')
+options=('!strip')
+source=()
+sha256sums=()
+
+package() {
+  install -d "$pkgdir/opt/alibaba-cloud-client"
+  cp -R --preserve=mode,timestamps,links \
+    "$startdir/payload/app/." "$pkgdir/opt/alibaba-cloud-client/"
+
+  install -Dm755 "$startdir/payload/alibaba-cloud-client" \
+    "$pkgdir/usr/bin/alibaba-cloud-client"
+  install -Dm644 "$startdir/payload/alibaba-cloud-client.desktop" \
+    "$pkgdir/usr/share/applications/alibaba-cloud-client.desktop"
+
+  local size
+  for size in 16 32 48 64 128 256 512; do
+    install -Dm644 "$startdir/payload/icons/${size}x${size}.png" \
+      "$pkgdir/usr/share/icons/hicolor/${size}x${size}/apps/alibaba-cloud-client.png"
+  done
+}

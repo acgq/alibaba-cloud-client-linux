@@ -1,0 +1,7 @@
+#!/bin/bash
+set -Eeuo pipefail
+
+APPDIR="${APPDIR:-$(cd "$(dirname "$0")" && pwd)}"
+export CHROME_DESKTOP="alibaba-cloud-client.desktop"
+
+exec "$APPDIR/opt/alibaba-cloud-client/start.sh" "$@"

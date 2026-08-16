@@ -1,0 +1,17 @@
+#!/bin/bash
+set -Eeuo pipefail
+
+APP_ROOT="$(cd "$(dirname "$0")" && pwd)"
+
+if [ ! -x "$APP_ROOT/electron" ]; then
+    printf '[ERROR] Linux Electron runtime not found: %s\n' "$APP_ROOT/electron" >&2
+    exit 1
+fi
+
+export CHROME_DESKTOP="${CHROME_DESKTOP:-alibaba-cloud-client.desktop}"
+export ELECTRON_FORCE_IS_PACKAGED=1
+
+# Arguments are passed through unchanged. This permits troubleshooting such as:
+#   ./start.sh --ozone-platform=x11
+# The sandbox remains enabled unless the user explicitly passes --no-sandbox.
+exec "$APP_ROOT/electron" "$@"
