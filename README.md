@@ -1,20 +1,20 @@
 # Alibaba Cloud Client for Linux
 
-将阿里云官方 macOS 客户端转换为 Linux x86_64 应用，并生成 Arch/Manjaro
-安装包与 AppImage。项目不包含、下载或重新发布阿里云客户端本身；构建时必须由用户
-提供官方 DMG。
+将阿里云官方 macOS 客户端转换为 Linux x86_64 应用，并生成 Arch/Manjaro、
+Debian/Ubuntu 安装包与 AppImage。构建脚本默认从阿里云官方下载地址获取 DMG；
+也可以显式指定本地 DMG。
 
 当前固定支持：
 
 - Alibaba Cloud Client 2.3.3
 - Electron 19.1.9
 - Linux x86_64
-- Arch/Manjaro `.pkg.tar.zst` 与 AppImage
+- Arch/Manjaro `.pkg.tar.zst`、Debian/Ubuntu `.deb` 与 AppImage
 
 ## 构建依赖
 
-需要 `bash`、`make`、`7z`、`curl`、`unzip`、`tar`、`xz`、`python3`、
-`gcc/g++`、`file`、ImageMagick、`makepkg`。构建脚本使用固定的
+需要 `bash`、`make`、`7z`、`curl`、`unzip`、`tar`、`xz`、`ar`、`python3`、
+`gcc/g++`、`file`、ImageMagick；Arch 包还需要 `makepkg`。构建脚本使用固定的
 Node.js 22.22.2，并从 Electron 官方发布页下载和校验 Electron 19.1.9。
 
 在 Arch/Manjaro 上可安装常用构建依赖：
@@ -25,24 +25,39 @@ sudo pacman -S --needed base-devel p7zip curl unzip xz python imagemagick
 
 ## 使用
 
-由于官方下载文件名可能带 URL 查询参数，建议显式传入完整路径：
+不带参数时会从官方默认地址下载并缓存 DMG：
 
 ```bash
-make build-app DMG='/path/to/alibaba-cloud-client-latest.dmg?...'
+make build-app
 make run
 make pacman
+make deb
 APPIMAGETOOL=/path/to/appimagetool make appimage
 ```
 
-也可以运行 `make package` 同时构建两种格式。输出位于 `dist/`：
+也可以通过 `DMG=/path/to/file.dmg` 使用本地文件；设置 `REFRESH_DMG=1` 会刷新
+缓存。默认下载地址可通过 `DMG_URL` 覆盖。
+
+运行 `make package` 会同时构建三种格式。输出位于 `dist/`：
 
 - `alibaba-cloud-client-2.3.3-1-x86_64.pkg.tar.zst`
+- `alibaba-cloud-client_2.3.3-1_amd64.deb`
 - `Alibaba_Cloud_Client-2.3.3-x86_64.AppImage`
+
+推送形如 `v2.3.3-1` 的标签时，[GitHub Actions](.github/workflows/release.yml)
+会在 Ubuntu runner 上构建 `.deb` 和 AppImage，并上传到对应 GitHub Release。
+Arch/Manjaro 包继续使用 `make pacman` 在 Arch 系环境中构建。
 
 安装 pacman 包：
 
 ```bash
 sudo pacman -U dist/alibaba-cloud-client-2.3.3-1-x86_64.pkg.tar.zst
+```
+
+AUR 用户也可以安装二进制包：
+
+```bash
+yay -S alibaba-cloud-client-bin
 ```
 
 如果 Electron 在 Wayland 会话中显示异常，可以显式使用 XWayland：
