@@ -10,6 +10,7 @@ EXPECTED_APP_VERSION="2.3.3"
 EXPECTED_ELECTRON_VERSION="19.1.9"
 BETTER_SQLITE3_VERSION="12.5.0"
 NODE_PTY_VERSION="1.1.0-beta35"
+DEFAULT_DMG_URL="https://aliyun-client-assist.oss-accelerate.aliyuncs.com/client/releases/darwin/x64/alibaba-cloud-client-latest.dmg"
 
 WORK_DIR="${ALIBABA_WORK_DIR:-$REPO_DIR/build/work}"
 CACHE_DIR="${ALIBABA_CACHE_DIR:-${XDG_CACHE_HOME:-$HOME/.cache}/alibaba-cloud-client-linux}"
@@ -23,6 +24,8 @@ Usage: ./install.sh [/path/to/alibaba-cloud-client.dmg]
 Environment overrides:
   ALIBABA_NODE_SOURCE       Existing Node.js >=22.12 runtime directory
   ALIBABA_ELECTRON_ZIP      Existing electron-v19.1.9-linux-x64.zip
+  ALIBABA_DMG_URL           Official DMG URL used when no path is supplied
+  ALIBABA_REFRESH_DMG       Set to 1 to refresh the cached official DMG
   ALIBABA_CACHE_DIR         Download cache directory
   ALIBABA_WORK_DIR          Temporary build directory
   ALIBABA_INSTALL_DIR       Generated application directory
@@ -32,7 +35,8 @@ USAGE
 
 discover_dmg() {
     local explicit="${1:-}"
-    local candidates=()
+    local dmg_url="${ALIBABA_DMG_URL:-$DEFAULT_DMG_URL}"
+    local cached_dmg="$CACHE_DIR/source/alibaba-cloud-client-$EXPECTED_APP_VERSION.dmg"
 
     if [ -n "$explicit" ]; then
         require_file "$explicit"
@@ -40,14 +44,11 @@ discover_dmg() {
         return
     fi
 
-    while IFS= read -r -d '' candidate; do
-        candidates+=("$candidate")
-    done < <(find "$REPO_DIR" -maxdepth 1 -type f -name '*.dmg*' -print0)
-
-    [ "${#candidates[@]}" -gt 0 ] || die "No DMG found; pass its path to install.sh"
-    [ "${#candidates[@]}" -eq 1 ] \
-        || die "Multiple DMG files found; pass the intended path explicitly"
-    printf '%s\n' "${candidates[0]}"
+    if [ "${ALIBABA_REFRESH_DMG:-0}" = "1" ]; then
+        rm -f "$cached_dmg" "$cached_dmg.part"
+    fi
+    download_file "$dmg_url" "$cached_dmg"
+    printf '%s\n' "$cached_dmg"
 }
 
 run_asar() {
@@ -260,7 +261,7 @@ with open(destination, "wb") as handle:
 PY
     require_file "$largest"
     for size in 16 32 48 64 128 256 512; do
-        magick "$largest" -resize "${size}x${size}" \
+        "$IMAGE_CONVERTER" "$largest" -resize "${size}x${size}" \
             "$INSTALL_DIR/.linux/icons/${size}x${size}.png"
     done
     cp "$INSTALL_DIR/.linux/icons/256x256.png" "$INSTALL_DIR/.linux/icon.png"
@@ -322,9 +323,16 @@ main() {
     esac
     [ "$(uname -m)" = "x86_64" ] || die "Only x86_64 build hosts are supported"
 
-    for command in 7z curl unzip tar xz sha256sum python3 file ldd npm magick; do
+    for command in 7z curl unzip tar xz sha256sum python3 file ldd npm; do
         require_command "$command"
     done
+    if command -v magick >/dev/null 2>&1; then
+        IMAGE_CONVERTER="magick"
+    elif command -v convert >/dev/null 2>&1; then
+        IMAGE_CONVERTER="convert"
+    else
+        die "Required command not found: magick or convert"
+    fi
     dmg="$(discover_dmg "${1:-}")"
     info "Source DMG: $dmg"
 

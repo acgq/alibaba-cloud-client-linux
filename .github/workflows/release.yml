@@ -1,0 +1,57 @@
+name: Release Linux packages
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  deb-and-appimage:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes \
+            binutils build-essential curl file imagemagick npm p7zip-full \
+            python3 tar unzip xz-utils
+
+      - name: Build Linux application
+        run: make build-app
+
+      - name: Build Debian package
+        run: make deb
+
+      - name: Download verified appimagetool
+        run: |
+          curl --fail --location --retry 3 \
+            --output "$RUNNER_TEMP/appimagetool-x86_64.AppImage" \
+            https://github.com/AppImage/appimagetool/releases/download/1.9.1/appimagetool-x86_64.AppImage
+          echo "ed4ce84f0d9caff66f50bcca6ff6f35aae54ce8135408b3fa33abfc3cb384eb0  $RUNNER_TEMP/appimagetool-x86_64.AppImage" \
+            | sha256sum --check
+          chmod 0755 "$RUNNER_TEMP/appimagetool-x86_64.AppImage"
+
+      - name: Build AppImage
+        env:
+          APPIMAGE_EXTRACT_AND_RUN: "1"
+          APPIMAGETOOL: ${{ runner.temp }}/appimagetool-x86_64.AppImage
+        run: make appimage
+
+      - name: Create release and upload Ubuntu-built packages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release create "$GITHUB_REF_NAME" \
+              --title "Alibaba Cloud Client Linux 2.3.3-1" \
+              --notes "Unofficial Linux packages converted from the official Alibaba Cloud Client 2.3.3 macOS DMG."
+          fi
+          gh release upload "$GITHUB_REF_NAME" --clobber \
+            dist/alibaba-cloud-client_2.3.3-1_amd64.deb \
+            dist/Alibaba_Cloud_Client-2.3.3-x86_64.AppImage
