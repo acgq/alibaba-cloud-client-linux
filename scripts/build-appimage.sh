@@ -8,7 +8,7 @@ REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 APP_DIR="${ALIBABA_APP_DIR:-$REPO_DIR/alibaba-cloud-client-app}"
 APPDIR="${ALIBABA_APPIMAGE_DIR:-$REPO_DIR/build/appimage.AppDir}"
 DIST_DIR="${ALIBABA_DIST_DIR:-$REPO_DIR/dist}"
-OUTPUT="$DIST_DIR/Alibaba_Cloud_Client-2.3.3-x86_64.AppImage"
+OUTPUT="$DIST_DIR/Alibaba_Cloud_Client-2.3.6-x86_64.AppImage"
 
 resolve_appimagetool() {
     if [ -n "${APPIMAGETOOL:-}" ]; then
@@ -49,6 +49,6 @@ cp "$APP_DIR/.linux/icon.png" \
 
 rm -f "$OUTPUT"
 info "Building AppImage"
-ARCH=x86_64 VERSION=2.3.3 "$appimagetool" --no-appstream "$APPDIR" "$OUTPUT"
+ARCH=x86_64 VERSION=2.3.6 "$appimagetool" --no-appstream "$APPDIR" "$OUTPUT"
 chmod 0755 "$OUTPUT"
 info "Built AppImage: $OUTPUT"

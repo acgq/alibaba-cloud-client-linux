@@ -1,6 +1,6 @@
 pkgname=alibaba-cloud-client-bin
-pkgver=2.3.3
-pkgrel=1
+pkgver=2.3.6
+pkgrel=2
 pkgdesc='Alibaba Cloud Client for Linux (unofficial binary conversion)'
 arch=('x86_64')
 url='https://github.com/acgq/alibaba-cloud-client-linux'
@@ -23,7 +23,7 @@ conflicts=('alibaba-cloud-client')
 options=('!strip')
 source=("https://github.com/acgq/alibaba-cloud-client-linux/releases/download/v${pkgver}-${pkgrel}/alibaba-cloud-client-${pkgver}-${pkgrel}-x86_64.pkg.tar.zst")
 noextract=("alibaba-cloud-client-${pkgver}-${pkgrel}-x86_64.pkg.tar.zst")
-sha256sums=('9a789c8bb642feb194c1967edf052942ea5929ab3bdab8aacee54f4a8aaa2d4c')
+sha256sums=('df9f75e1e812adb9983f048fb7084447518b84b2af086930207762687ece4d0f')
 
 package() {
   bsdtar --no-same-owner \

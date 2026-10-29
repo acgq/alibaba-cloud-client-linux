@@ -6,14 +6,14 @@ Debian/Ubuntu 安装包与 AppImage。构建脚本默认从阿里云官方下载
 
 当前固定支持：
 
-- Alibaba Cloud Client 2.3.3
+- Alibaba Cloud Client 2.3.6
 - Electron 19.1.9
 - Linux x86_64
 - Arch/Manjaro `.pkg.tar.zst`、Debian/Ubuntu `.deb` 与 AppImage
 
 ## 构建依赖
 
-需要 `bash`、`make`、`7z`、`curl`、`unzip`、`tar`、`xz`、`ar`、`python3`、
+需要 `bash`、`make`、支持 APFS 的现代 7-Zip（`7zz` 或 `7z`）、`curl`、`unzip`、`tar`、`xz`、`ar`、`python3`、
 `gcc/g++`、`file`、ImageMagick；Arch 包还需要 `makepkg`。构建脚本使用固定的
 Node.js 22.22.2，并从 Electron 官方发布页下载和校验 Electron 19.1.9。
 
@@ -22,6 +22,9 @@ Node.js 22.22.2，并从 Electron 官方发布页下载和校验 Electron 19.1.9
 ```bash
 sudo pacman -S --needed base-devel p7zip curl unzip xz python imagemagick
 ```
+
+Ubuntu 24.04 构建时请安装 `7zip` 包（提供 `7zz`）；旧版 `p7zip-full`
+不能解包新版官方 DMG 使用的 APFS 文件系统。构建脚本优先使用 `7zz`。
 
 ## 使用
 
@@ -40,18 +43,18 @@ APPIMAGETOOL=/path/to/appimagetool make appimage
 
 运行 `make package` 会同时构建三种格式。输出位于 `dist/`：
 
-- `alibaba-cloud-client-2.3.3-1-x86_64.pkg.tar.zst`
-- `alibaba-cloud-client_2.3.3-1_amd64.deb`
-- `Alibaba_Cloud_Client-2.3.3-x86_64.AppImage`
+- `alibaba-cloud-client-2.3.6-2-x86_64.pkg.tar.zst`
+- `alibaba-cloud-client_2.3.6-2_amd64.deb`
+- `Alibaba_Cloud_Client-2.3.6-x86_64.AppImage`
 
-推送形如 `v2.3.3-1` 的标签时，[GitHub Actions](.github/workflows/release.yml)
+推送形如 `v2.3.6-2` 的标签时，[GitHub Actions](.github/workflows/release.yml)
 会在 Ubuntu runner 上构建 `.deb` 和 AppImage，并上传到对应 GitHub Release。
 Arch/Manjaro 包继续使用 `make pacman` 在 Arch 系环境中构建。
 
 安装 pacman 包：
 
 ```bash
-sudo pacman -U dist/alibaba-cloud-client-2.3.3-1-x86_64.pkg.tar.zst
+sudo pacman -U dist/alibaba-cloud-client-2.3.6-2-x86_64.pkg.tar.zst
 ```
 
 AUR 用户也可以安装二进制包：
@@ -71,6 +74,9 @@ yay -S alibaba-cloud-client-bin
 
 ## Linux 差异
 
+- 对 `*.aliyuncs.com` 的默认 HTTPS 请求固定使用 TLS 1.2，规避 Electron 19 /
+  BoringSSL 在 TLS 1.3 下间歇出现的 `ERR_SSL_BAD_DECRYPT`。保留证书校验、
+  自定义 HTTPS agent 和代理设置，不会自动重放失败的云端操作。
 - `better-sqlite3` 与 `node-pty` 会针对 Linux/Electron 19 重新编译。
 - 本地终端会扫描 Linux 上的 `bash`、`fish`、`zsh`、`node` 和 `python`。
 - Linux 新构建的终端默认使用等宽字体 `Consolas`，避免 macOS 默认字体

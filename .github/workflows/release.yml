@@ -19,11 +19,16 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install --yes \
-            binutils build-essential curl file imagemagick npm p7zip-full \
+            7zip binutils build-essential curl file imagemagick npm \
             python3 tar unzip xz-utils
 
       - name: Build Linux application
         run: make build-app
+
+      - name: Test Linux compatibility patches and scripts
+        run: |
+          export PATH="$PWD/build/work/node-runtime/bin:$PATH"
+          make test
 
       - name: Build Debian package
         run: make deb
@@ -49,9 +54,9 @@ jobs:
         run: |
           if ! gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
             gh release create "$GITHUB_REF_NAME" \
-              --title "Alibaba Cloud Client Linux 2.3.3-1" \
-              --notes "Unofficial Linux packages converted from the official Alibaba Cloud Client 2.3.3 macOS DMG."
+              --title "Alibaba Cloud Client Linux 2.3.6-2" \
+              --notes "Unofficial Linux packages converted from the official Alibaba Cloud Client 2.3.6 macOS DMG."
           fi
           gh release upload "$GITHUB_REF_NAME" --clobber \
-            dist/alibaba-cloud-client_2.3.3-1_amd64.deb \
-            dist/Alibaba_Cloud_Client-2.3.3-x86_64.AppImage
+            dist/alibaba-cloud-client_2.3.6-2_amd64.deb \
+            dist/Alibaba_Cloud_Client-2.3.6-x86_64.AppImage

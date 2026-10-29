@@ -57,6 +57,33 @@ function replaceOnce(source, patch) {
 
 const modulePatches = [
   {
+    target: "./target/main/local/HttpClient.js",
+    patches: [
+      {
+        id: "linux-acs-tls12",
+        needle:
+          'function sendRequest(request, proxy) {\n' +
+          '    return __awaiter(this, void 0, void 0, function* () {\n' +
+          '        if (proxy != undefined) {',
+        replacement:
+          '// Electron 19/BoringSSL intermittently fails to decrypt TLS 1.3 records\n' +
+          '// from Alibaba OpenAPI. Keep certificate verification and avoid replaying requests.\n' +
+          'const linuxAcsHttpsAgent = process.platform === "linux"\n' +
+          '    ? new (__webpack_require__("https").Agent)({ minVersion: "TLSv1.2", maxVersion: "TLSv1.2" })\n' +
+          '    : undefined;\n' +
+          'function sendRequest(request, proxy) {\n' +
+          '    return __awaiter(this, void 0, void 0, function* () {\n' +
+          '        if (linuxAcsHttpsAgent && request.httpsAgent === undefined && /^https:/i.test(request.url)) {\n' +
+          '            const hostname = new URL(request.url).hostname;\n' +
+          '            if (hostname.endsWith(".aliyuncs.com")) {\n' +
+          '                request.httpsAgent = linuxAcsHttpsAgent;\n' +
+          '            }\n' +
+          '        }\n' +
+          '        if (proxy != undefined) {',
+      },
+    ],
+  },
+  {
     target: "./node_modules/@johnlindquist/node-window-manager/dist/index.js",
     patches: [
       {

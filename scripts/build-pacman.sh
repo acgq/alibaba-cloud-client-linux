@@ -35,7 +35,7 @@ chmod 0755 "$BUILD_DIR/payload/alibaba-cloud-client"
     makepkg --force --nodeps --noconfirm
 )
 
-package_file="$(find "$BUILD_DIR" -maxdepth 1 -type f -name 'alibaba-cloud-client-2.3.3-1-x86_64.pkg.tar.*' -print -quit)"
+package_file="$(find "$BUILD_DIR" -maxdepth 1 -type f -name 'alibaba-cloud-client-2.3.6-2-x86_64.pkg.tar.*' -print -quit)"
 require_file "$package_file"
 cp "$package_file" "$DIST_DIR/"
 ln -sfn "$(basename "$package_file")" "$DIST_DIR/alibaba-cloud-client-latest.pkg.tar.zst"

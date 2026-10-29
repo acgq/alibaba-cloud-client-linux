@@ -6,7 +6,7 @@ REPO_DIR="$SCRIPT_DIR"
 . "$REPO_DIR/scripts/lib/common.sh"
 . "$REPO_DIR/scripts/lib/node-runtime.sh"
 
-EXPECTED_APP_VERSION="2.3.3"
+EXPECTED_APP_VERSION="2.3.6"
 EXPECTED_ELECTRON_VERSION="19.1.9"
 BETTER_SQLITE3_VERSION="12.5.0"
 NODE_PTY_VERSION="1.1.0-beta35"
@@ -75,8 +75,8 @@ extract_dmg() {
     info "Extracting official DMG"
     rm -rf "$extract_dir"
     mkdir -p "$extract_dir"
-    7z x -y -o"$extract_dir" "$dmg" >/dev/null \
-        || die "7z could not extract the DMG"
+    "$SEVENZIP" x -y -o"$extract_dir" "$dmg" >/dev/null \
+        || die "$SEVENZIP could not extract the DMG"
 
     find "$extract_dir" -type d -name 'Alibaba Cloud Client.app' -print -quit
 }
@@ -323,9 +323,16 @@ main() {
     esac
     [ "$(uname -m)" = "x86_64" ] || die "Only x86_64 build hosts are supported"
 
-    for command in 7z curl unzip tar xz sha256sum python3 file ldd npm; do
+    for command in curl unzip tar xz sha256sum python3 file ldd npm; do
         require_command "$command"
     done
+    if command -v 7zz >/dev/null 2>&1; then
+        SEVENZIP="7zz"
+    elif command -v 7z >/dev/null 2>&1; then
+        SEVENZIP="7z"
+    else
+        die "Required command not found: 7zz or 7z (with APFS support)"
+    fi
     if command -v magick >/dev/null 2>&1; then
         IMAGE_CONVERTER="magick"
     elif command -v convert >/dev/null 2>&1; then

@@ -5,14 +5,14 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 . "$SCRIPT_DIR/lib/common.sh"
 
-APPIMAGE="${ALIBABA_SMOKE_APPIMAGE:-$REPO_DIR/dist/Alibaba_Cloud_Client-2.3.3-x86_64.AppImage}"
+APPIMAGE="${ALIBABA_SMOKE_APPIMAGE:-$REPO_DIR/dist/Alibaba_Cloud_Client-2.3.6-x86_64.AppImage}"
 SMOKE_SECONDS="${ALIBABA_SMOKE_SECONDS:-15}"
 require_file "$APPIMAGE"
 require_command timeout
 
 smoke_dir="$(mktemp -d /tmp/alibaba-cloud-client-smoke.XXXXXX)"
 trap 'rm -rf "$smoke_dir"' EXIT
-smoke_appimage="$smoke_dir/Alibaba_Cloud_Client-2.3.3-x86_64.AppImage"
+smoke_appimage="$smoke_dir/Alibaba_Cloud_Client-2.3.6-x86_64.AppImage"
 cp "$APPIMAGE" "$smoke_appimage"
 chmod 0755 "$smoke_appimage"
 mkdir -p "$smoke_appimage.home" "$smoke_appimage.config"

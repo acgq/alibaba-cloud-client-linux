@@ -1,7 +1,7 @@
 pkgbase = alibaba-cloud-client-bin
 	pkgdesc = Alibaba Cloud Client for Linux (unofficial binary conversion)
-	pkgver = 2.3.3
-	pkgrel = 1
+	pkgver = 2.3.6
+	pkgrel = 2
 	url = https://github.com/acgq/alibaba-cloud-client-linux
 	arch = x86_64
 	license = custom:upstream
@@ -16,11 +16,11 @@ pkgbase = alibaba-cloud-client-bin
 	depends = mesa
 	depends = nss
 	optdepends = xdg-utils: desktop integration helpers
-	provides = alibaba-cloud-client=2.3.3
+	provides = alibaba-cloud-client=2.3.6
 	conflicts = alibaba-cloud-client
-	noextract = alibaba-cloud-client-2.3.3-1-x86_64.pkg.tar.zst
+	noextract = alibaba-cloud-client-2.3.6-2-x86_64.pkg.tar.zst
 	options = !strip
-	source = https://github.com/acgq/alibaba-cloud-client-linux/releases/download/v2.3.3-1/alibaba-cloud-client-2.3.3-1-x86_64.pkg.tar.zst
-	sha256sums = 9a789c8bb642feb194c1967edf052942ea5929ab3bdab8aacee54f4a8aaa2d4c
+	source = https://github.com/acgq/alibaba-cloud-client-linux/releases/download/v2.3.6-2/alibaba-cloud-client-2.3.6-2-x86_64.pkg.tar.zst
+	sha256sums = df9f75e1e812adb9983f048fb7084447518b84b2af086930207762687ece4d0f
 
 pkgname = alibaba-cloud-client-bin

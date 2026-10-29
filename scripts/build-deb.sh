@@ -8,7 +8,7 @@ REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 APP_DIR="${ALIBABA_APP_DIR:-$REPO_DIR/alibaba-cloud-client-app}"
 BUILD_DIR="${ALIBABA_DEB_BUILD_DIR:-$REPO_DIR/build/deb}"
 DIST_DIR="${ALIBABA_DIST_DIR:-$REPO_DIR/dist}"
-OUTPUT="$DIST_DIR/alibaba-cloud-client_2.3.3-1_amd64.deb"
+OUTPUT="$DIST_DIR/alibaba-cloud-client_2.3.6-2_amd64.deb"
 
 for command in ar md5sum tar xz; do
     require_command "$command"
@@ -46,7 +46,7 @@ done
 installed_size="$(du -sk "$BUILD_DIR/data" | awk '{print $1}')"
 cat > "$BUILD_DIR/control/control" <<EOF
 Package: alibaba-cloud-client
-Version: 2.3.3-1
+Version: 2.3.6-2
 Architecture: amd64
 Maintainer: acgq <chen330021@live.com>
 Installed-Size: $installed_size
